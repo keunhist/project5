@@ -54,9 +54,10 @@
 			<div class="mail_wrap">
 				<div class="mail_name">이메일</div> 
 				<div class="mail_input_box">
-					<input class="mail_input" name="memeberMail">
+					<input class="mail_input" name="memberMail">
 				</div>
 				<span class="final_mail_ck">이메일을 입력해주세요.</span>
+				<span class="mail_input_box_warn"></span>
 				<div class="mail_check_wrap">
 					<div class="mail_check_input_box" id="mail_check_input_box_false">
 						<input class="mail_check_input"  disabled="disabled">
@@ -126,7 +127,7 @@ $(document).ready(function(){
         var addr = $('.address_input_3').val();        // 주소 입력란
         
         /* 아이디 유효성검사 */
-        if(id == ""){
+        if(id == "" ){
             $('.final_id_ck').css('display','block');
             idCheck = false;
         }else{
@@ -151,8 +152,41 @@ $(document).ready(function(){
             $('.final_pwck_ck').css('display', 'none');
             pwckCheck = true;
         }
-		//$("#join_form").attr("action", "/member/join");
-		//$("#join_form").submit();
+
+        /* 이름 유효성 검사 */
+        if(name == ""){
+            $('.final_name_ck').css('display','block');
+            nameCheck = false;
+        }else{
+            $('.final_name_ck').css('display', 'none');
+            nameCheck = true;
+        }
+        
+        /* 이메일 유효성 검사 */
+        if(mail == ""){
+            $('.final_mail_ck').css('display','block');
+            mailCheck = false;
+        }else{
+            $('.final_mail_ck').css('display', 'none');
+            mailCheck = true;
+        }
+        
+        /* 주소 유효성 검사 */
+        if(addr == ""){
+            $('.final_addr_ck').css('display','block');
+            addressCheck = false;
+        }else{
+            $('.final_addr_ck').css('display', 'none');
+            addressCheck = true;
+        }
+        
+        /* 최종 유효성 검사 */
+        if(idCheck&&idckCheck&&pwCheck&&pwckCheck&&pwckcorCheck&&nameCheck&&mailCheck&&mailnumCheck&&addressCheck ){
+        	  $("#join_form").attr("action", "/member/join");
+              $("#join_form").submit();  
+        }    
+ 
+        return false;  
 	});
 });
 
@@ -188,6 +222,17 @@ $(".mail_check_button").click(function(){
     var email = $(".mail_input").val();        // 입력한 이메일
     var cehckBox = $(".mail_check_input");        // 인증번호 입력란
     var boxWrap = $(".mail_check_input_box");    // 인증번호 입력란 박스
+    var warnMsg = $(".mail_input_box_warn");    // 이메일 입력 경고글
+    
+    /* 이메일 형식 유효성 검사 */
+    if(mailFormCheck(email)){
+        warnMsg.html("이메일이 전송 되었습니다. 이메일을 확인해주세요.");
+        warnMsg.css("display", "inline-block");
+    } else {
+        warnMsg.html("올바르지 못한 이메일 형식입니다.");
+        warnMsg.css("display", "inline-block");
+        return false;
+    }    
     $.ajax({
         
         type:"GET",
@@ -208,10 +253,12 @@ $(".mail_check_input").blur(function(){
 	
 	 if(inputCode == code){                            // 일치할 경우
 	        checkResult.html("인증번호가 일치합니다.");
-	        checkResult.attr("class", "correct");        
+	        checkResult.attr("class", "correct");
+	        mailnumCheck = true;
 	    } else {                                            // 일치하지 않을 경우
 	        checkResult.html("인증번호를 다시 확인해주세요.");
 	        checkResult.attr("class", "incorrect");
+	        mailnumCheck = false;
 	    }    
 });
 
@@ -272,9 +319,28 @@ function execution_daum_address(){
 /* 비밀번호 확인 일치 유효성 검사 */
 
 $('.pwck_input').on("propertychange change keyup paste input", function(){
-        
+	  var pw = $('.pw_input').val();
+	  var pwck = $('.pwck_input').val();
+	  $('.final_pwck_ck').css('display', 'none');
+	  
+	  if(pw == pwck){
+	        $('.pwck_input_re_1').css('display','block');
+	        $('.pwck_input_re_2').css('display','none');
+	        pwckcorCheck = true;
+	    }else{
+	        $('.pwck_input_re_1').css('display','none');
+	        $('.pwck_input_re_2').css('display','block');
+	        pwckcorCheck = false;
+	    }        
     
-});    
+});
+
+/* 입력 이메일 형식 유효성 검사 */
+function mailFormCheck(email){
+   var form = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+   return form.test(email);
+}
+
 </script>
 
 </body>
