@@ -12,7 +12,7 @@
 <script
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-  crossorigin="anonymous"></script>
+  crossorigin="anonymous"></script>  
 </head>
 <body>
 	<div class="subject_name_warp">
@@ -37,7 +37,9 @@
 	                    			<td><c:out value="${list.authorId}"></c:out> </td>
 	                    			<td>
 	                    				<a class="move" href='<c:out value="${list.authorId}"/>' data-name='<c:out value="${list.authorName}"/>'>
-</a>
+											<c:out value="${list.authorName}"></c:out>
+										</a>
+
 									</td>
 	                    			<td><c:out value="${list.nationName}"></c:out> </td>
 	                    		</tr>
