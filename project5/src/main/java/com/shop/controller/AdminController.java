@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.service.AdminService;
 import com.shop.service.AuthorService;
@@ -42,8 +43,20 @@ public class AdminController {
     }
     /* 상품 관리 페이지 접속 */
     @RequestMapping(value = "goodsManage", method = RequestMethod.GET)
-    public void goodsManageGET() throws Exception{
+    public void goodsManageGET(Criteria cri, Model model) throws Exception{
         logger.info("상품 관리 페이지 접속");
+        /* 상품 리스트 데이터 */
+		List list = adminService.goodsGetList(cri);
+		
+		if(!list.isEmpty()) {
+			model.addAttribute("list", list);
+		} else {
+			model.addAttribute("listCheck", "empty");
+			return;
+		}
+		
+		/* 페이지 인터페이스 데이터 */
+		model.addAttribute("pageMaker", new PageDTO(cri, adminService.goodsGetTotal(cri)));
     }
     
     /* 상품 등록 페이지 접속 */
@@ -61,6 +74,53 @@ public class AdminController {
         logger.info("변경 전.........." + list);
 		logger.info("변경 후.........." + cateList);
     }
+    
+    /* 상품 조회 페이지 */
+	@GetMapping({"/goodsDetail", "/goodsModify"})
+	public void goodsGetInfoGET(int bookId, Criteria cri, Model model) throws JsonProcessingException {
+		
+		logger.info("goodsGetInfo()........." + bookId);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		
+		/* 카테고리 리스트 데이터 */
+		model.addAttribute("cateList", mapper.writeValueAsString(adminService.cateList()));		
+		
+		/* 목록 페이지 조건 정보 */
+		model.addAttribute("cri", cri);
+		
+		/* 조회 페이지 정보 */
+		model.addAttribute("goodsInfo", adminService.goodsGetDetail(bookId));
+		
+	}
+	
+	/* 상품 정보 수정 */
+	@PostMapping("/goodsModify")
+	public String goodsModifyPOST(BookVO vo, RedirectAttributes rttr) {
+		
+		logger.info("goodsModifyPOST.........." + vo);
+		
+		int result = adminService.goodsModify(vo);
+		
+		rttr.addFlashAttribute("modify_result", result);
+		
+		return "redirect:/admin/goodsManage";		
+		
+	}
+	
+	/* 상품 정보 삭제 */
+	@PostMapping("/goodsDelete")
+	public String goodsDeletePOST(int bookId, RedirectAttributes rttr) {
+		
+		logger.info("goodsDeletePOST..........");
+		
+		int result = adminService.goodsDelete(bookId);
+		
+		rttr.addFlashAttribute("delete_result", result);
+		
+		return "redirect:/admin/goodsManage";
+		
+	}
     
     /* 작가 등록 페이지 접속 */
     @RequestMapping(value = "authorEnroll", method = RequestMethod.GET)

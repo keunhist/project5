@@ -432,8 +432,9 @@ ClassicEditor
 		
 		if(!isNaN(discountRate)){
 			$(".span_discount").html(discountPrice);
-		}
+		} 
 	});
+});
 	
 </script> 	
 </body>
