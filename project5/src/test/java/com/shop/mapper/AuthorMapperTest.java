@@ -87,4 +87,19 @@ public class AuthorMapperTest {
 		System.out.println("수정 후...................." + mapper.authorGetDetail(author.getAuthorId()));
 		
 	}
+	
+	/* 작가 정보 삭제 */
+	@Test
+	public void authorDeleteTest() {
+		
+		
+		int authorId = 9;
+		
+		int result = mapper.authorDelete(authorId);
+		
+		if(result == 1) {
+			System.out.println("삭제 성공");
+		}
+		
+	}
 }
