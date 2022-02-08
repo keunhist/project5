@@ -127,3 +127,18 @@ insert into bcate(tier, cateName, cateCode) values (1, '국외', '200000');
         -- 외래키 추가
 alter table book add foreign key (authorId) references author(authorId);
 alter table book add foreign key (cateCode) references bcate(cateCode);
+
+--재귀 복사
+insert into book(bookName, authorId, publeYear, publisher, cateCode, bookPrice, bookStock, bookDiscount,bookIntro, bookContents)
+(select bookName, authorId, publeYear, publisher, cateCode, bookPrice, bookStock, bookDiscount,bookIntro, bookContents from book);
+
+ create table image(
+        bookId int ,
+        fileName varchar(100) not null,
+        uploadPath varchar(200) not null,
+        uuid varchar(100)not null ,
+        primary key (uuid),
+        foreign key (bookId) references book(bookId)
+    );
+    
+    select * from image
