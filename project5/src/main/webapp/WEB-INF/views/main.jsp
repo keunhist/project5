@@ -42,7 +42,7 @@
                     </li>
                 </c:if>      
 	                <li>
-	                    	고객센터
+	                    	<a href="/notice/list">공지사항</a>
 	                </li>
 	                      
             </ul>    
